@@ -1,0 +1,17 @@
+version: '2'
+services:
+  mongo:
+   image: mongo:latest
+   container_name: mongodb
+   networks:
+    - backend
+   volumes:
+    - /opt/nooz/mongo:/data/db
+
+  frontend:
+   image: marcobeyer/frontend
+   container_name: frontend
+   networks:
+    - backend
+   depends_on:
+    - mongo
