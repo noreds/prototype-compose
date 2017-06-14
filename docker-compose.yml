@@ -1,5 +1,24 @@
-version: '2'
+version: '3'
 services:
+  import:
+   image: marcobeyer/xmnt-import
+   command: python to_mongodb.py
+   networks:
+    - backend
+   depends_on:
+    - mongo
+ 
+  translate:
+   image: marcobeyer/meta
+   command: python translate_news.py
+   networks:
+    - backend
+   depends_on:
+    - mongo   
+   environment:
+    - WATSON_TRANSLATOR_USER
+    - WATSON_TRANSLATOR_PASSWORD
+
   mongo:
    image: mongo:latest
    container_name: mongodb
@@ -13,5 +32,15 @@ services:
    container_name: frontend
    networks:
     - backend
+    - frontend
    depends_on:
     - mongo
+    - import
+   ports:
+    - 8080:8080
+
+networks:
+  backend:
+    driver: bridge
+  frontend:
+    external: true
